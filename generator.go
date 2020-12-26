@@ -262,7 +262,7 @@ func generateTagFields(fields []*Field) []string {
 // 将文件移动到指定目录: Path + PackageName
 func moveDir(oldPath, newPath string) error {
 	if _, err := os.Stat(newPath); os.IsNotExist(err) {
-		os.MkdirAll(newPath, 0666)
+		os.MkdirAll(newPath, os.ModePerm)
 	}
 
 	fileList, err := getFileAndDirList(oldPath)
@@ -275,7 +275,7 @@ func moveDir(oldPath, newPath string) error {
 		if err != nil {
 			return err
 		}
-		if err = ioutil.WriteFile(filepath.Join(newPath, filename), data, 0666); err != nil {
+		if err = ioutil.WriteFile(filepath.Join(newPath, filename), data, os.ModePerm); err != nil {
 			return err
 		}
 	}
