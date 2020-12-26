@@ -47,6 +47,8 @@ type Config struct {
 	DNS           string // 数据库连接
 	DriverName    string // 数据库驱动，默认mysql,目前只支持mysql
 	ModelTemplate string // model对象的模板名
+	UpdateTime    string // 自定义gorm的updated_at时间追踪
+	CreateTime    string // 自定义gorm的create_at时间追踪
 }
 
 // TableInfo 表信息
@@ -81,6 +83,8 @@ func init() {
 		PackageName:   "model",
 		DriverName:    "mysql",
 		ModelTemplate: "model.tpl",
+		CreateTime:    "CreateTime",
+		UpdateTime:    "UpdateTime",
 	}
 	config.AbsPath = filepath.Clean(filepath.ToSlash(filepath.Join(config.Path, config.PackageName)))
 }
@@ -161,10 +165,15 @@ func Execute() {
 	generate()
 }
 
+var funcs = template.FuncMap{
+	"isImport": isImportTime,
+	"autoTime": autoTime,
+}
+
 // 生成文件
 func generate() {
 	tmp, err := template.New("model.tpl").
-		Funcs(template.FuncMap{"isImport": isImportTime}).
+		Funcs(funcs).
 		ParseFiles(filepath.Join("model.tpl"))
 
 	if err != nil {
@@ -379,4 +388,17 @@ func isImportTime(fields []*Field) bool {
 		}
 	}
 	return false
+}
+
+// 自动追踪gorm autoCreateUpdate、autoUpdateTime
+func autoTime(field string) string {
+	switch field {
+	case "UpdateTime":
+		return "autoUpdateTime"
+	case "CreateTime":
+		return "autoCreateTime"
+	default:
+
+	}
+	return ""
 }
