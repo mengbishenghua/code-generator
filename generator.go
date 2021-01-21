@@ -22,10 +22,10 @@ var (
 
 const (
 	queryTableInfoSql = `SELECT table_name name,IFNULL(TABLE_COMMENT,table_name) comment
- 				FROM INFORMATION_SCHEMA.TABLES 
+ 				FROM INFORMATION_SCHEMA.TABLES
 				WHERE UPPER(table_type)='BASE TABLE'
-				AND LOWER(table_schema) = ? 
-				ORDER BY table_name asc`
+				AND LOWER(table_schema) = ?
+				ORDER BY table_name`
 	columnsSql = `SELECT COLUMN_NAME fname,
        		column_comment fdesc,
        		DATA_TYPE ftype,
